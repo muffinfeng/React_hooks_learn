@@ -1,40 +1,32 @@
 import './App.css';
-import React,{Component,PureComponent} from 'react'
+import React,{Component,useState,useMemo,memo} from 'react'
 
-class Foo extends PureComponent{
-  render(){
-    console.log('Foo render');
-    return <div>{this.props.person.age}</div>;
+const Counter = memo(function Counter(props){
+  console.log("count init")
+  return (
+    <div onClick={props.onClick}>{props.count}</div>
+  )
+})
+
+function App(){
+  const[count, setCount] = useState(0);
+
+  const double = useMemo(() => {
+    return count * 2;
+  },[count === 3])
+
+  const onClick = () => {
+    console.log('onClick');
   }
-}
 
-
-class App extends Component {
-  state = {
-    count: 0,
-    person: {
-      age: 1,
-    }
-  }
-
-
-  render(){
-    const person = this.state.person;
-    const count = this.state.count;
-    return (
-      <div>
-        <button onClick={() => {
-          person.age++;
-          this.setState({
-            person,
-          })
-        }}>
-          add
-        </button>
-        <Foo person={person}></Foo>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <button type="button" onClick={() => {setCount(count + 1)}}>
+          Click {count}   double: {double}
+      </button>
+      <Counter count={double} onClick={onClick}></Counter>
+    </div>
+  );
 }
 
 export default App;
