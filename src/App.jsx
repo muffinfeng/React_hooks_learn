@@ -1,31 +1,15 @@
 import './App.css';
-import React,{Component,useState,useMemo,memo} from 'react'
-
-const Counter = memo(function Counter(props){
-  console.log("count init")
-  return (
-    <div onClick={props.onClick}>{props.count}</div>
-  )
-})
+import React,{PureComponent,useState,useMemo,memo,useCallback,useRef, useEffect} from 'react'
+import UseRefLearn from './learn/useRefLearn';
+import DiyHooksLearn from './learn/diyHooksLearn';
+import UseMemoUseCallback from './learn/useMemoUseCallback'
+import TodoListNoRedux from './learn/todoList_noRedux';
 
 function App(){
-  const[count, setCount] = useState(0);
-
-  const double = useMemo(() => {
-    return count * 2;
-  },[count === 3])
-
-  const onClick = () => {
-    console.log('onClick');
-  }
+  
 
   return (
-    <div>
-      <button type="button" onClick={() => {setCount(count + 1)}}>
-          Click {count}   double: {double}
-      </button>
-      <Counter count={double} onClick={onClick}></Counter>
-    </div>
+    <TodoListNoRedux></TodoListNoRedux>
   );
 }
 
