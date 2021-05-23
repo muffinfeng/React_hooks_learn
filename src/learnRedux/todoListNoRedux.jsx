@@ -1,11 +1,12 @@
 import React,{PureComponent,useState,useMemo,memo,useCallback,useRef, useEffect} from 'react'
-import './todoList_noRedux.css'
+import './todoListNoRedux.css'
 import {createAdd,
         createSet,
         createRemove,
-        createToggle} from './action'
+        createToggle} from './action';
+import reducer from './reducers';
 
-let newId = Date.now();
+
 
 function bindActionCreators(actionCreators, dispatch){
     const ret = {};
@@ -32,11 +33,7 @@ const Controll = memo(function Controll(props) {
 
         if(value.length === 0 ){return;}
         console.log('hi')
-        addTodo({
-            id : ++newId,
-            complete : false,
-            text : value
-        });
+        addTodo(value);
 
         inputRef.current.value = '';
     }
@@ -117,42 +114,51 @@ const Todos = memo(function Todos(props){
 
 let KEY= '_$key_';
 
+let store = {
+    todos: [],
+    increment: 0,
+}
+
 function TodoList(){
     const [todos, setTodos] = useState([]); 
+    const [increment, setInCrement] = useState(0);
 
-    const dispatch = useCallback((action) => {
-        const {type, payload} = action;
-        switch(type){
-            case 'set':
-                setTodos(payload);
-                break;
-            case 'add':
-                setTodos(todos => [...todos,payload]); 
-                break;
-            case 'remove':
-                setTodos(todos => todos.filter(todo => {
-                    return todo.id !== payload
-                }))
-                break;
-            case 'toggle':
-                console.log('toggle')
-                setTodos(todos => todos.map(todo => {
-                    if(todo.id === payload){
-                        return {
-                            ...todo,
-                            complete : !todo.complete,
-                        }
-                    }else{
-                        return todo
-                    }
-                }));
-                break;
-            default:
+     
+    useEffect(() => {
+        Object.assign(store,{
+            todos,
+            increment
+        })
+    },[todos, increment])
+
+    const dispatch = (action) => {
+
+        if('function' === typeof action){
+            action(dispatch, () => store);
+            return;
         }
+        const newState = reducer(store,action);
 
-    })
+        const setters = {
+            todos: setTodos,
+            increment: setInCrement
+        };
 
-    // const addTodo = useCallback((todo) => {
+        for(let key in newState){
+            setters[key](newState[key]);
+        }
+    };
+
+    useEffect(() => {
+        const value = localStorage.getItem(KEY, todos) || '';
+        dispatch(createSet(JSON.parse(value)))
+    },[]);
+
+    useEffect(() => {
+        localStorage.setItem(KEY, JSON.stringify(todos))
+    },[todos]);
+
+// const addTodo = useCallback((todo) => {
     //     setTodos(todos => [...todos,todo]); 
     // })
 
@@ -174,16 +180,6 @@ function TodoList(){
     //         }
     //     }));
     // })
-
-
-    useEffect(() => {
-        const value = localStorage.getItem(KEY, todos) || '';
-        dispatch(createSet(JSON.parse(value)))
-    },[]);
-
-    useEffect(() => {
-        localStorage.setItem(KEY, JSON.stringify(todos))
-    },[todos]);
 
     return(
         <div>

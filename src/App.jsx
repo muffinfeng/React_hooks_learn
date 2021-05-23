@@ -3,7 +3,7 @@ import React,{PureComponent,useState,useMemo,memo,useCallback,useRef, useEffect}
 import UseRefLearn from './learn/useRefLearn';
 import DiyHooksLearn from './learn/diyHooksLearn';
 import UseMemoUseCallback from './learn/useMemoUseCallback'
-import TodoListNoRedux from './learn/todoList_noRedux';
+import TodoListNoRedux from './learnRedux/todoListNoRedux.jsx';
 
 function App(){
   
