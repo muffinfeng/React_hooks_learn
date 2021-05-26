@@ -6,7 +6,7 @@ import 'normalize.css/normalize.css';
 import store from './store';
 import './index.css';
 import App from './App.jsx';
-console.log('fsdf');
+
 ReactDom.render(
     <Provider store={store}>
         <App />
